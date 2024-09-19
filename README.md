@@ -1,6 +1,5 @@
-# JU-TE-6K-Demos
+# Plasma-Effekt
 
-## Plasma
 ![Testbild](/Bilder/Plasma-A2.png)
 
 Das hier vorgestellte Programm erzeugt einen Plasma-Effekt. Es ist vollständig in Zilog Z8-Assembler realisiert. Zum Assemblieren wurde der [Arnold-Assembler](http://john.ccac.rwth-aachen.de:8000/as/) unter Windows 11 verwendet.
@@ -65,7 +64,7 @@ x           set     x+1
 y       set     y+1
     endm
 ```
-Die schnellste Variante hat eine Laufzeit von 89,0 ms für eine Iteration (Darstellung einer 64x32 Map). Die Plasma-Werte sind als 4-Bit-Werte abgelegt. Sie werden in Gruppen von je 8 Werten ausgelesen und jeweils in 4 Bytes (R,G,B,H) konvertiert, die dann als ein Byte pro Farbebene in den Video-RAM geschrieben werden. Leider kann der JU-TE-6K nicht parallel in die Farbebenen schreiben, so dass noch zusätzlich die Farbbänke pro Farbe umgeschaltet werden müssen. 
+Die schnellste Variante (mit direktem Zugriff auf den Video-RAM) hat eine Laufzeit von 89,0 ms für eine Iteration (Darstellung einer 64x32 Map). Die Plasma-Werte sind als 4-Bit-Werte abgelegt. Sie werden in Gruppen von je 8 Werten ausgelesen und jeweils in 4 Bytes (R,G,B,H) konvertiert, die dann als ein Byte pro Farbebene in den Video-RAM geschrieben werden. Leider kann der JU-TE-6K nicht parallel in die Farbebenen schreiben, so dass noch zusätzlich die Farbbänke pro Farbe umgeschaltet werden müssen:
 ```
 ;------------------------------------------------------------------------------
 ; Stellt Plasma auf dem Bildschirm dar. (VRAM, FGL -> direkter Zugriff) 
