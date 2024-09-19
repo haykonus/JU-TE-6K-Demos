@@ -20,7 +20,7 @@ Das hier vorgestellte Programm erzeugt einen Plasma-Effekt. Es ist vollständig 
 Der Plasma-Effekt wurde in zwei Varianten umgesetzt:
 
 1. mit direktem Zugriff auf den Video-RAM (s. [FGL](https://github.com/haykonus/JU-TE-6K-Demos/blob/main/FGL/FGL.asm))
-2. mit dem integriertem PLOT-Befehl des ES4.0
+2. mit dem integrierten PLOT-Befehl des ES4.0
 
 Für die Darstellung der Plasma-Effekte wurden vier Farbpaletten integriert. Sowohl die Varianten als auch die Farbpaletten können zur Laufzeit mit Tasten ausgewählt werden.
 
