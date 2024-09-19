@@ -65,7 +65,7 @@ x           set     x+1
 y       set     y+1
     endm
 ```
-Die schnellste Variante hat eine Laufzeit von 89,0 ms für eine Iteration (Darstellung einer 64x32 Map). Die Plasma-Werte sind als 4-Bit-Werte abgelegt. Sie werden in Gruppen von je 8 Werten ausgelesen und jeweils in 4 Bytes (R,G,B,H) konvertiert, die dann als ein Byte pro Farbebene in den Video-RAM geschrieben werden. Leider kann der JU-TE-6K nicht parallel in die Farbebenen schrieben, so dass noch zusätzlich die Farbbänke pro Farbe umgeschaltet werden müssen. 
+Die schnellste Variante hat eine Laufzeit von 89,0 ms für eine Iteration (Darstellung einer 64x32 Map). Die Plasma-Werte sind als 4-Bit-Werte abgelegt. Sie werden in Gruppen von je 8 Werten ausgelesen und jeweils in 4 Bytes (R,G,B,H) konvertiert, die dann als ein Byte pro Farbebene in den Video-RAM geschrieben werden. Leider kann der JU-TE-6K nicht parallel in die Farbebenen schreiben, so dass noch zusätzlich die Farbbänke pro Farbe umgeschaltet werden müssen. 
 ```
 ;------------------------------------------------------------------------------
 ; Stellt Plasma auf dem Bildschirm dar. (VRAM, FGL -> direkter Zugriff) 
@@ -196,5 +196,7 @@ plv_to_rgb:
 Dieses Projekt nutzt Infos und Software aus folgenden Quellen:
 
 https://rosettacode.org/wiki/Plasma_effect
+https://hc-ddr.hucki.net/wiki/doku.php/tiny/es40
+
 
 
