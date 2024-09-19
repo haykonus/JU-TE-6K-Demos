@@ -57,7 +57,7 @@ menu1:          ld      var_X_lo, #13           ; X
                 ld      var_Z_lo, #1            ; Textkursor Pos.       
                 call    SCRFUN
                 call    PRISTRI
-                db      " 1  VRAM,FGL ",0
+                db      " 1  VRAM,FGL  ",0
                 ret
 
 ;------------------------------------------------------------------------------
