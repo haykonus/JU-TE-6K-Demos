@@ -72,7 +72,7 @@ menu2:          ld      var_X_lo, #13           ; X
                 
 ;------------------------------------------------------------------------------
 
-main1:          ld      var_P_lo, #3            ; Palette 0
+main1:          ld      var_P_lo, #3            ; Palette 3
                 ld      var_K_lo, #0            ; keine Taste
                 
                 call    setPalette
@@ -80,7 +80,7 @@ main1:          ld      var_P_lo, #3            ; Palette 0
                 
 m1:             call    KEY0
 m2:             cp      6Dh, #31h               ; 1
-                jr      z, pl_ass
+                jr      z, pl_vram
                 
                 cp      6Dh, #32h               ; 2
                 jr      z, pl_plot
@@ -95,11 +95,11 @@ m2:             cp      6Dh, #31h               ; 1
                 jr      z, exit
                 jr      m1
         
-pl_ass:         ld      var_K_lo, 6Dh           ; Taste merken
+pl_vram:        ld      var_K_lo, 6Dh           ; Taste merken
                 call    drawColors      
                 ld      r3, #00Fh               
                 call    drawMenu                
-                call    drawPlasma2             ; VRAM, Assembler
+                call    drawPlasma2             ; VRAM, FGL
                 jr      m2
                 
 pl_plot:        ld      var_K_lo, 6Dh           ; Taste merken
@@ -311,8 +311,6 @@ drawPlasma1:
                                         add     r4, r5
                                         and     r4, #0FH
                 
-                                        ld      r6, #hi(colpal)
-                                        ld      r7, #lo(colpal)
                                         ld      r6, var_C_hi
                                         ld      r7, var_C_lo                            
                                         add     r7, r4
