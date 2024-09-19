@@ -196,6 +196,7 @@ plv_to_rgb:
 Dieses Projekt nutzt Infos und Software aus folgenden Quellen:
 
 https://rosettacode.org/wiki/Plasma_effect
+
 https://hc-ddr.hucki.net/wiki/doku.php/tiny/es40
 
 
