@@ -465,7 +465,7 @@ plv_to_rgb:
                 enum    sw, gr, bl, blh,gn, gnh,cy, cyh,rt, rth,li, lih,ge, geh,grh,ws
                 
 colpal:         db      0,  1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14, 15
-                db      gnh,gnh,gnh,geh,geh,rt,rt,rt,rt,lih,blh,blh,blh,blh,gn, gn, gn          
+                db      gnh,gnh,gnh,geh,geh,rt, rt, rt, rt, lih,blh,blh,blh,blh,gn, gn          
                 db      rt, rt, rt, rth,rth,rth,li, li, lih,lih,ge, ge, ge, geh,geh,geh
                 db      rt, rt, rt, rt, rth,rth,rth,li, li, li, lih,lih,lih,geh,geh,geh 
         
