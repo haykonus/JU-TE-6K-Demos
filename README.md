@@ -28,7 +28,7 @@ Dieses Programm ist der Versuch einer Portierung der Einleitung (Intro) einer [G
 
 ## Implementierung
 
-Die animierten Linien bestehen aus 4 Zeilen. Für jede Zeile müssen die 4-Farb-Bänke des JuTe-6K beschrieben werden, um die entsprechende Farbe einer Zeile darzustellen. Dazu wird mit dem PUSH-Befehl das jeweilige Byte in die Farb-Bank geschrieben. Das Schreiben der 40 Bytes pro Zeile erfolgt durch Wiederholung der Befehlsfolge mit dem REPT-Marco des Arnold-Assemblers mit max. Geschwindgkeit. Vor jedem Schreibvorgang wird noch der Hintergrund durch Lesen eines Shaddow-VRAM-Buffers geprüft und brücksichtigt (s. drawLineG/drawLineW in [kccdemo.asm](https://github.com/haykonus/JU-TE-6K-Demos/blob/main/KCCdemo/kccdemo.asm)).
+Die animierten Linien bestehen aus 4 Zeilen. Für jede Zeile müssen die 4 Farb-Bänke des JuTe-6K beschrieben werden, um die entsprechende Farbe einer Zeile darzustellen. Dazu wird mit dem PUSH-Befehl das jeweilige Byte in die Farb-Bank geschrieben. Das Schreiben der 40 Bytes pro Zeile erfolgt durch Wiederholung der Befehlsfolge mit dem REPT-Marco des Arnold-Assemblers mit max. Geschwindgkeit. Vor jedem Schreibvorgang wird noch der Hintergrund durch Lesen eines Shaddow-VRAM-Buffers geprüft und brücksichtigt (s. drawLineG/drawLineW in [kccdemo.asm](https://github.com/haykonus/JU-TE-6K-Demos/blob/main/KCCdemo/kccdemo.asm)).
 
 Bsp. für eine Farb-Bank in einer Zeile:
 
