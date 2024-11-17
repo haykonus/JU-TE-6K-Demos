@@ -1,17 +1,129 @@
-# Plasma-Effekt
-[Demo Video](/Bilder/Plasma-600.gif)
+# INHALT
 
-![Testbild](/Bilder/Plasma-A2.png)
+[KCcompact-Demo für JuTe-6K](https://github.com/haykonus/JU-TE-6K-Demos-Dev/blob/main/README.md#kccompact-demo-f%C3%BCr-jute-6k)
+
+[Plasma-Effekt](https://github.com/haykonus/JU-TE-6K-Demos-Dev/blob/main/README.md#plasma-effekt)
+
+<br>
+
+# KCcompact-Demo für JuTe-6K
+## [>> Demo Video ansehen <<](https://nextcloud-ext.peppermint.de/s/jTaJbMyDS46GqiY)
+
+![Testbild](/KCCdemo/Bilder/kccdemo-A2.png)
+
+Dieses Programm ist der Versuch einer Portierung der Einleitung (Intro) einer [Grafik-Demonstration für den KCcompact](https://www.youtube.com/watch?v=M-UYCD3MkBg) auf den JuTe-6K. Zum Assemblieren wurde der [Arnold-Assembler](http://john.ccac.rwth-aachen.de:8000/as/) unter Windows 11 und Kubuntu 24 verwendet. 
+
+## Vorausetzungen
+
+- JuTe-6K (JuTe-2K/4K + Grafikerweiterung oder JuTe-6K-kompakt)
+- oder [JTCEMU](http://www.jens-mueller.org/jtcemu/index.html)
+- 32KB RAM
+
+## Schnellstart
+> [!NOTE]
+> Die Links unten anklicken und danach den Download-Button (Download raw file) im Github klicken, um die Datei zu laden.
+
+- [kccdemo_8000H.bin](https://github.com/haykonus/JU-TE-6K-Demos-Dev/blob/main/KCCdemo/kccdemo_8000H.bin) oder [kccdemo_8000H.wav](https://github.com/haykonus/JU-TE-6K-Demos-Dev/blob/main/KCCdemo/kccdemo_8000H.wav) auf Adresse 8000H laden.
+- mit J8000 starten
+
+## Implementierung
+
+Die animierten Linien bestehen aus 4 Zeilen. Für jede Zeile müssen die 4-Farb-Bänke des JuTe-6K beschrieben werden, um die entsprechende Farbe einer Zeile darzustellen. Dazu wird mit dem PUSH-Befehl das jeweilige Byte in die Farb-Bank geschrieben. Das Schreiben der 40 Bytes pro Zeile erfolgt durch Wiederholung der Befehlsfolge mit dem REPT-Marco des Arnold-Assemblers mit max. Geschwindgkeit. Vor jedem Schreibvorgang wird noch der Hintergrund durch Lesen eines Shaddow-VRAM-Buffers geprüft und brücksichtigt (s. drawLineG/drawLineW in [kccdemo.asm](https://github.com/haykonus/JU-TE-6K-Demos-Dev/blob/main/KCCdemo/kccdemo.asm)).
+
+Bsp. für eine Farb-Bank in einer Zeile:
+
+```
+ ...
+ ld      SPH, r6         ; Video-RAM-Addresse (VRAM)
+ ld      SPL, r7
+
+ ld      r4, r6
+ add     r4, #80h        ; Shaddow-VRAM-Adresse bilden 40 + 80 = C0
+ ld      r5, r7
+ dec     r5              ; Korrektur PUSH -> SP=SP-1
+
+ lde     @rr14, r15      ; Farb-Bank einschalten
+ lde     r1, @rr12       ; Farb-Byte holen
+ 
+
+ rept    40
+         lde     r0, @rr4        ; 12      Shaddow-VRAM lesen   
+         com     r0              ;  6      Hintergrund berücksichtigen
+         and     r0, r1          ;  6
+         push    r0              ; 12      VRAM rückwärts schreiben  
+         dec     r5              ;  6      Shaddow-VRAM-Zeiger auf nächstes Byte setzen   
+ endm                            ; --
+                                 ; 40
+ incw    rr12            ; nächstes Farb-Byte
+ rr      r15             ; nächste Farb-Bank
+ ...
+```
+<br>
+Die der zeitliche Verlauf der Funktion zur Animation der Linien auf der imaginären Z-Achse ist:
+
+
+![Funktion](https://github.com/haykonus/JU-TE-6K-Demos-Dev/blob/main/KCCdemo/Bilder/funktion-600.png)
+![Funktion-Def](https://github.com/haykonus/JU-TE-6K-Demos-Dev/blob/main/KCCdemo/Bilder/funktion-def-600.png)
+
+Da der JuTe-6K keine Trigonometrie beherrscht, wurden die Möglichkeiten des Makro-Assemblers genutzt:
+```
+;------------------------------------------------------------------------------
+XW              equ     64                              ; 64 Y-Werte
+cmask           equ     00111111b                       ; Maske für Ring-Puffer
+PI              equ     3.141592
+;------------------------------------------------------------------------------
+Y_POS_RING_BUFFER:
+
+x       set 0
+        while x<=XW-1
+value       set ( sin (1 * (x*2*PI/XW+1) ) + 0.5 * sin( 2 * (x*2*PI/XW+1) ) ) * 0.71 * (-1)
+            if value > 0
+value           set     value*1.55                  ; untere "Halbwelle" strecken
+            endif
+value       set     int ((value * 64) + 86)         ; Position der Wendepunkte
+            db      value
+            ;message "value: \{value}"
+x           set     x+1     
+        endm
+```
+
+
+## Quellen
+
+Dieses Projekt nutzt Infos und Software aus folgenden Quellen:
+
+
+https://hc-ddr.hucki.net/wiki/doku.php/tiny/es40
+
+https://www.youtube.com/watch?v=M-UYCD3MkBg
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+
+# Plasma-Effekt
+## [>> Demo Video ansehen <<](/Plasma/Bilder/Plasma-600.gif)
+
+![Testbild](/Plasma/Bilder/Plasma-A2.png)
 
 Das hier vorgestellte Programm erzeugt einen Plasma-Effekt. Es ist vollständig in Zilog Z8-Assembler realisiert. Zum Assemblieren wurde der [Arnold-Assembler](http://john.ccac.rwth-aachen.de:8000/as/) unter Windows 11 verwendet.
 
 ## Vorausetzungen
 
-- JuTe 6K (JuTe-2K/4K + Grafikerweiterung oder JuTe-6K-Compact)
-- [JTCEMU](http://www.jens-mueller.org/jtcemu/index.html)
+- JuTe-6K (JuTe-2K/4K + Grafikerweiterung oder JuTe-6K-kompakt)
+- oder [JTCEMU](http://www.jens-mueller.org/jtcemu/index.html)
 - 32KB RAM
 
 ## Schnellstart
+> [!NOTE]
+> Die Links unten anklicken und danach den Download-Button (Download raw file) im Github klicken, um die Datei zu laden.
 
 - [plasma_8000H.bin](https://github.com/haykonus/JU-TE-6K-Demos/blob/main/Plasma/plasma_8000H.bin) oder [plasma_8000H.wav](https://github.com/haykonus/JU-TE-6K-Demos/blob/main/Plasma/plasma_8000H.wav) auf Adresse 8000H laden.
 - mit J8000 starten
@@ -45,7 +157,7 @@ for (var y = 0; y < h; y++) {
     }
 }
 ```
-Da der JU-TE-6K keine Trigonometrie beherrscht, wurden die Möglichkeiten des Makro-Assemblers genutzt:
+Da der JuTe-6K keine Trigonometrie beherrscht, wurden die Möglichkeiten des Makro-Assemblers genutzt:
 ```
 plasma:
 y   set 0
@@ -65,7 +177,7 @@ x           set     x+1
 y       set     y+1
     endm
 ```
-Die schnellste Variante (mit direktem Zugriff auf den Video-RAM) hat eine Laufzeit von 89,0 ms für eine Iteration (Darstellung einer 64x32 Map). Die Plasma-Werte sind als 4-Bit-Werte abgelegt. Sie werden in Gruppen von je 8 Werten ausgelesen und jeweils in 4 Bytes (R,G,B,H) konvertiert, die dann als ein Byte pro Farbebene in den Video-RAM geschrieben werden. Leider kann der JU-TE-6K nicht parallel in die Farbebenen schreiben, so dass noch zusätzlich die Farbbänke pro Farbe umgeschaltet werden müssen:
+Die schnellste Variante (mit direktem Zugriff auf den Video-RAM) hat eine Laufzeit von 89,0 ms für eine Iteration (Darstellung einer 64x32 Map). Die Plasma-Werte sind als 4-Bit-Werte abgelegt. Sie werden in Gruppen von je 8 Werten ausgelesen und jeweils in 4 Bytes (R,G,B,H) konvertiert, die dann als ein Byte pro Farbebene in den Video-RAM geschrieben werden. Leider kann der JuTe-6K nicht parallel in die Farbebenen schreiben, so dass noch zusätzlich die Farbbänke pro Farbe umgeschaltet werden müssen:
 ```
 ;------------------------------------------------------------------------------
 ; Stellt Plasma auf dem Bildschirm dar. (VRAM, FGL -> direkter Zugriff) 

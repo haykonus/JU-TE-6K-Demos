@@ -20,13 +20,13 @@
 ;------------------------------------------------------------------------------
 
                 srp     #70h
-                call    initFGL                 ; FGL initialisieren    
+                call    FGL_INIT                 ; FGL initialisieren    
                 
                 ; clear screen
                 
                 ld      var_Z_lo, #11010000b    ; Schwarz -> Farbe RGBH0000
                 ld      var_Z_hi, #0FFh         ; pixel
-                call    cls             
+                call    FGL_CLS             
                 call    testbild
  
                 ld      r2, #0F0H               ; sw auf ws

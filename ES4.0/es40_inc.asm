@@ -49,7 +49,7 @@ cupos           equ     5Bh             ; 2 Byte Position (X = 0..39,Y = 0..23)
 ; %56/57        Sprungvektor für IRQ
 ; %58           OSD (Zeilenlänge)   
 ; %67           H-Byte Startadresse Zeichensatz
-; %6C           Tastaturfunktionen
+; %6C           Tastaturfu nktionen
 
 ; Speicher
 ; %4000-5FFF    Video-RAM-Bänke
@@ -220,5 +220,6 @@ RP              EQU     0FDH            ; Registerpointer
 ; AS-Funktionen
 hi      function x,(x>>8)&255
 lo      function x, x&255
+
 
 
