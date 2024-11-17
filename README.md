@@ -1,8 +1,8 @@
 # INHALT
 
-[KCcompact-Demo für JuTe-6K](https://github.com/haykonus/JU-TE-6K-Demos-Dev/blob/main/README.md#kccompact-demo-f%C3%BCr-jute-6k)
+[KCcompact-Demo für JuTe-6K](https://github.com/haykonus/JU-TE-6K-Demos/blob/main/README.md#kccompact-demo-f%C3%BCr-jute-6k)
 
-[Plasma-Effekt](https://github.com/haykonus/JU-TE-6K-Demos-Dev/blob/main/README.md#plasma-effekt)
+[Plasma-Effekt](https://github.com/haykonus/JU-TE-6K-Demos/blob/main/README.md#plasma-effekt)
 
 <br>
 
@@ -23,12 +23,12 @@ Dieses Programm ist der Versuch einer Portierung der Einleitung (Intro) einer [G
 > [!NOTE]
 > Die Links unten anklicken und danach den Download-Button (Download raw file) im Github klicken, um die Datei zu laden.
 
-- [kccdemo_8000H.bin](https://github.com/haykonus/JU-TE-6K-Demos-Dev/blob/main/KCCdemo/kccdemo_8000H.bin) oder [kccdemo_8000H.wav](https://github.com/haykonus/JU-TE-6K-Demos-Dev/blob/main/KCCdemo/kccdemo_8000H.wav) auf Adresse 8000H laden.
+- [kccdemo_8000H.bin](https://github.com/haykonus/JU-TE-6K-Demos/blob/main/KCCdemo/kccdemo_8000H.bin) oder [kccdemo_8000H.wav](https://github.com/haykonus/JU-TE-6K-Demos/blob/main/KCCdemo/kccdemo_8000H.wav) auf Adresse 8000H laden.
 - mit J8000 starten
 
 ## Implementierung
 
-Die animierten Linien bestehen aus 4 Zeilen. Für jede Zeile müssen die 4-Farb-Bänke des JuTe-6K beschrieben werden, um die entsprechende Farbe einer Zeile darzustellen. Dazu wird mit dem PUSH-Befehl das jeweilige Byte in die Farb-Bank geschrieben. Das Schreiben der 40 Bytes pro Zeile erfolgt durch Wiederholung der Befehlsfolge mit dem REPT-Marco des Arnold-Assemblers mit max. Geschwindgkeit. Vor jedem Schreibvorgang wird noch der Hintergrund durch Lesen eines Shaddow-VRAM-Buffers geprüft und brücksichtigt (s. drawLineG/drawLineW in [kccdemo.asm](https://github.com/haykonus/JU-TE-6K-Demos-Dev/blob/main/KCCdemo/kccdemo.asm)).
+Die animierten Linien bestehen aus 4 Zeilen. Für jede Zeile müssen die 4-Farb-Bänke des JuTe-6K beschrieben werden, um die entsprechende Farbe einer Zeile darzustellen. Dazu wird mit dem PUSH-Befehl das jeweilige Byte in die Farb-Bank geschrieben. Das Schreiben der 40 Bytes pro Zeile erfolgt durch Wiederholung der Befehlsfolge mit dem REPT-Marco des Arnold-Assemblers mit max. Geschwindgkeit. Vor jedem Schreibvorgang wird noch der Hintergrund durch Lesen eines Shaddow-VRAM-Buffers geprüft und brücksichtigt (s. drawLineG/drawLineW in [kccdemo.asm](https://github.com/haykonus/JU-TE-6K-Demos/blob/main/KCCdemo/kccdemo.asm)).
 
 Bsp. für eine Farb-Bank in einer Zeile:
 
@@ -62,8 +62,8 @@ Bsp. für eine Farb-Bank in einer Zeile:
 Die der zeitliche Verlauf der Funktion zur Animation der Linien auf der imaginären Z-Achse ist:
 
 
-![Funktion](https://github.com/haykonus/JU-TE-6K-Demos-Dev/blob/main/KCCdemo/Bilder/funktion-600.png)
-![Funktion-Def](https://github.com/haykonus/JU-TE-6K-Demos-Dev/blob/main/KCCdemo/Bilder/funktion-def-600.png)
+![Funktion](https://github.com/haykonus/JU-TE-6K-Demos/blob/main/KCCdemo/Bilder/funktion-600.png)
+![Funktion-Def](https://github.com/haykonus/JU-TE-6K-Demos/blob/main/KCCdemo/Bilder/funktion-def-600.png)
 
 Da der JuTe-6K keine Trigonometrie beherrscht, wurden die Möglichkeiten des Makro-Assemblers genutzt:
 ```
