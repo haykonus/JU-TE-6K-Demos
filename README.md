@@ -60,7 +60,10 @@ Bsp. für eine Farb-Bank in einer Zeile:
 ```
 <br>
 Die der zeitliche Verlauf der Funktion zur Animation der Linien auf der imaginären Z-Achse ist:
+
 <br>
+<br>
+
 ![Funktion-Def](https://github.com/haykonus/JU-TE-6K-Demos/blob/main/KCCdemo/Bilder/funktion-def-600.png)
 
 ![Funktion](https://github.com/haykonus/JU-TE-6K-Demos/blob/main/KCCdemo/Bilder/funktion-600.png)
