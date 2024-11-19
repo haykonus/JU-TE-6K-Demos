@@ -7,7 +7,7 @@
 <br>
 
 # KCcompact-Demo für JuTe-6K
-## [>> Demo Video ansehen <<](https://nextcloud-ext.peppermint.de/s/jTaJbMyDS46GqiY)
+# [>> Demo Video ansehen <<](https://nextcloud-ext.peppermint.de/s/jTaJbMyDS46GqiY)
 
 ![Testbild](/KCCdemo/Bilder/kccdemo-A2.png)
 
@@ -113,7 +113,7 @@ https://www.youtube.com/watch?v=M-UYCD3MkBg
 
 
 # Plasma-Effekt
-## [>> Demo Video ansehen <<](/Plasma/Bilder/Plasma-600.gif)
+# [>> Demo Video ansehen <<](/Plasma/Bilder/Plasma-600.gif)
 
 ![Testbild](/Plasma/Bilder/Plasma-A2.png)
 
