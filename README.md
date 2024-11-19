@@ -1,3 +1,4 @@
+[English version](https://github-com.translate.goog/haykonus/JU-TE-6K-Demos?_x_tr_sl=de&_x_tr_tl=en&_x_tr_hl=de&_x_tr_pto=wapp)
 # INHALT
 
 [KCcompact-Demo für JuTe-6K](https://github.com/haykonus/JU-TE-6K-Demos/blob/main/README.md#kccompact-demo-f%C3%BCr-jute-6k)
