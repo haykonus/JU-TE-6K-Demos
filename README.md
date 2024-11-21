@@ -97,8 +97,9 @@ x           set     x+1
 
 Dieses Projekt nutzt Infos und Software aus folgenden Quellen:
 
-
 https://hc-ddr.hucki.net/wiki/doku.php/tiny/es40
+
+https://github.com/boert/JU-TE-Computer/tree/main
 
 https://www.youtube.com/watch?v=M-UYCD3MkBg
 
@@ -312,9 +313,10 @@ plv_to_rgb:
 
 Dieses Projekt nutzt Infos und Software aus folgenden Quellen:
 
-https://rosettacode.org/wiki/Plasma_effect
-
 https://hc-ddr.hucki.net/wiki/doku.php/tiny/es40
 
+https://github.com/boert/JU-TE-Computer/tree/main
+
+https://rosettacode.org/wiki/Plasma_effect
 
 
