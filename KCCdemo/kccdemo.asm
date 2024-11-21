@@ -213,6 +213,7 @@ invertRect:     push    var_Y_lo
 ;------------------------------------------------------------------------------
 
 moveOneChar:    decw    var_L_hi
+		decw    var_L_hi
                 jr      nz, oc1
 
                 ldrr    var_B, #banner_buffer
@@ -223,6 +224,8 @@ moveOneChar:    decw    var_L_hi
                 call    bannerToVRAM
 
                 incw    var_B_hi
+		incw    var_B_hi
+		
                 ret
 
 ;------------------------------------------------------------------------------
