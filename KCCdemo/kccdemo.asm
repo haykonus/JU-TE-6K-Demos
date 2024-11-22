@@ -473,11 +473,14 @@ drawLines:      push    r0
                 lde     r8, @rr0
                 ld      var_Y_lo, r8
 
-                cp      r8, #192/2
+		ld      r12, #hi(bg)
+		ld      r13, #lo(bg)                
+		
+		cp      r8, #192/2
                 jr      c, dls2
-                call    clrlineW
+                call    drawLineW
                 jr      dls3
-        dls2:   call    clrLineG
+        dls2:   call    drawLineG
         dls3:
                 inc     r1
                 and     r1, #cmask
@@ -527,41 +530,6 @@ drawLines:      push    r0
                 pop     r1
                 pop     r0
 
-                ret
-
-;------------------------------------------------------------------------------
-; clearLineR/W  Löscht eine Linie.
-;
-;               G = grüne  Objekte werden nicht überschrieben
-;               W = weisse Objekte werden nicht überschrieben
-;
-; in:           var_Y_lo        = Y
-;               rr12            = Zeiger auf Farbdefinition der Linien
-;                                 Z1(R,G,B,H) ... ZN(R,G,B,H)
-;
-; out:          Linie auf Bildschirm gelöscht
-;------------------------------------------------------------------------------
-
-clrLineG:       ld      r12, #hi(bg)
-                ld      r13, #lo(bg)
-
-                push    r12
-                push    r13
-                call    drawLineG
-                pop     r13
-                pop     r12
-                
-                ret
-
-clrLineW:       ld      r12, #hi(bg)
-                ld      r13, #lo(bg)
-
-                push    r12
-                push    r13
-                call    drawLineW
-                pop     r13
-                pop     r12
-                
                 ret
 
 ;------------------------------------------------------------------------------
