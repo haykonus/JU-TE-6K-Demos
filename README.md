@@ -14,7 +14,7 @@
 
 Dieses Programm ist der Versuch einer Portierung der Einleitung (Intro) einer [Grafik-Demonstration für den KCcompact](https://www.youtube.com/watch?v=M-UYCD3MkBg) auf den JuTe-6K. Zum Assemblieren wurde der [Arnold-Assembler](http://john.ccac.rwth-aachen.de:8000/as/) unter Windows 11 und Kubuntu 24 verwendet. 
 
-## Vorausetzungen
+## Voraussetzungen
 
 - JuTe-6K (JuTe-2K/4K + Grafikerweiterung oder JuTe-6K-kompakt)
 - oder [JTCEMU](http://www.jens-mueller.org/jtcemu/index.html)
@@ -121,7 +121,7 @@ https://www.youtube.com/watch?v=M-UYCD3MkBg
 
 Das hier vorgestellte Programm erzeugt einen Plasma-Effekt. Es ist vollständig in Zilog Z8-Assembler realisiert. Zum Assemblieren wurde der [Arnold-Assembler](http://john.ccac.rwth-aachen.de:8000/as/) unter Windows 11 verwendet.
 
-## Vorausetzungen
+## Voraussetzungen
 
 - JuTe-6K (JuTe-2K/4K + Grafikerweiterung oder JuTe-6K-kompakt)
 - oder [JTCEMU](http://www.jens-mueller.org/jtcemu/index.html)
