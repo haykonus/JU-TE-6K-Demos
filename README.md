@@ -20,7 +20,8 @@ Die Herausforderung war, den sehr effektiven Algorithmus auf die Z8 CPU zu porti
 
 - JuTe-6K (JuTe-2K/4K + Grafikerweiterung oder JuTe-6K-kompakt)
 - oder [JTCEMU](http://www.jens-mueller.org/jtcemu/index.html)
-- 4KB RAM (8000H-8FFFH)
+- 32KB RAM
+- Optional: [Video-Patch](https://github.com/haykonus/JU-TE-6K-Video-HW-Patch)
 
 ## Schnellstart
 > [!NOTE]
@@ -352,6 +353,7 @@ Dieses Programm ist der Versuch einer Portierung der Einleitung (Intro) einer [G
 - JuTe-6K (JuTe-2K/4K + Grafikerweiterung oder JuTe-6K-kompakt)
 - oder [JTCEMU](http://www.jens-mueller.org/jtcemu/index.html)
 - 32KB RAM
+- Optional: [Video-Patch](https://github.com/haykonus/JU-TE-6K-Video-HW-Patch)
 
 ## Schnellstart
 > [!NOTE]
@@ -451,6 +453,7 @@ Das hier vorgestellte Programm erzeugt einen Plasma-Effekt. Es ist vollständig 
 - JuTe-6K (JuTe-2K/4K + Grafikerweiterung oder JuTe-6K-kompakt)
 - oder [JTCEMU](http://www.jens-mueller.org/jtcemu/index.html)
 - 32KB RAM
+- Optional: [Video-Patch](https://github.com/haykonus/JU-TE-6K-Video-HW-Patch)
 
 ## Schnellstart
 > [!NOTE]
