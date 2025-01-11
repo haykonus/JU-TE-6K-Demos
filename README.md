@@ -23,6 +23,7 @@ Die Herausforderung war, den sehr effektiven Algorithmus auf die Z8 CPU zu porti
 - 32KB RAM
 - Optional: [Video-Patch](https://github.com/haykonus/JU-TE-6K-Video-HW-Patch)
 
+
 ## Schnellstart
 > [!NOTE]
 > Die Links unten anklicken und danach den Download-Button (Download raw file) im Github klicken, um die Datei zu laden.
