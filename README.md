@@ -7,7 +7,7 @@
 
 [Plasma-Effekt](https://github.com/haykonus/JU-TE-6K-Demos/tree/main?tab=readme-ov-file#plasma-effekt)
 
-<br>
+
 
 # GleEst
 ![GleEst](/GleEst/Bilder/gleest_JuTe-6K.gif)
