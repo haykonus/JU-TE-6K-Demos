@@ -20,7 +20,7 @@ Die Herausforderung war, den sehr effektiven Algorithmus auf die Z8 CPU zu porti
 
 - JuTe-6K (JuTe-2K/4K + Grafikerweiterung oder JuTe-6K-kompakt)
 - oder [JTCEMU](http://www.jens-mueller.org/jtcemu/index.html)
-- 4KB RAM (8000H-8FFFH)
+- 32KB RAM
 
 ## Schnellstart
 > [!NOTE]
