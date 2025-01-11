@@ -13,8 +13,8 @@ VRAM            equ     4000h
 VRAM_END        equ     5FFFh
 VRAM_LEN        equ     VRAM_END - VRAM
 
-VRAM_TAB_HI     equ     RAM_START       ; muss xx00-Adr. sein
-VRAM_TAB_LO     equ     RAM_START+100h  ; muss xx00-Adr. sein
+VRAM_TAB_HI     equ     FGL_RAM_START       ; muss xx00-Adr. sein
+VRAM_TAB_LO     equ     FGL_RAM_START+100h  ; muss xx00-Adr. sein
 
 saveH           equ     6Ah             ; Hilfs-Register
 saveL           equ     6Bh             ; Hilfs-Register
@@ -277,7 +277,7 @@ make_vt1:       add     r4,#40
                 
                 decw    rr0
                 ld      r3, #8
-                ld      r4, 10000000b
+                ld      r4, #10000000b
 make_vt3:       lde     @rr0, r4
                 rr      r4
                 incw    rr0
@@ -490,10 +490,12 @@ XPY_to_vram:
                 add     r7, r8          ;      |
                                         ;      |
                 ld      r5, var_X_lo    ;      |
-                and     r5, #00000111b  ;      |
-                ;or     r5, #11000000b  ;      |   kann entfallen bei align 100h
-                lde     r3, @rr4        ; -----+-> 122 Takte            
-                ret                     ;   rr6 -> VRAM, r3 -> Bit-Position 
+		and     r5, #00000111b  ;      |
+                or      r5, #11000000b  ;      |  
+                lde     r3, @rr4        ; -----+-> 122 Takte   
+				
+                ret                     ;   rr6 -> VRAM 
+					;   r3  -> Bitpos (1aus8) 
 
 ;------------------------------------------------------------------------------ 
 XPY_to_vram_r013:       
@@ -520,9 +522,11 @@ XPY_to_vram_r013:
                                         ;      |
                 ld      r11, var_X_lo   ;      |
                 and     r11, #00000111b ;      |
-                ;or     r11, #11000000b ;      |   kann entfallen bei align 100h        
-                lde     r3, @rr10       ; -----+-> 122 Takte            
-                ret                     ;   rr0 -> VRAM, r3 -> Bit-Position 
+                or     	r11, #11000000b ;      |         
+                lde     r3, @rr10       ; -----+-> 122 Takte  
+		
+                ret                     ;   rr0 -> VRAM 
+					;   r3  -> Bitpos (1aus8) 
                 
 ;------------------------------------------------------------------------------ 
 XPY_to_vram_es40:
@@ -574,10 +578,12 @@ vram3:          ret
 
                 align 100h                      ; VRAM-Tab muss XX00-Adr. sein
                 
-RAM_START       equ     $                       ; 
+FGL_RAM_START   equ     $                       ; 
+
                 ds      200h                    ; Länge der P(x,y) zu VRAM Tabelle 
 zoom_buffer     ds      32                      ; Zoom-Buffer für FGL_CHAROUT
-
+	
+FGL_RAM_END	equ	$
 
 
                         

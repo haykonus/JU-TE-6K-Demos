@@ -1,8 +1,17 @@
 ;------------------------------------------------------------------------------
-; ASM-Macros
+; Title:                Z8 Macros 
+;
+; Erstellt:             17.11.2024
+; Letzte Änderung:      09.01.2025
 ;------------------------------------------------------------------------------
 
-MACROS_INC                                ; Flag für include-Anweisungen
+MACROS_INC          	; Flag für include-Anweisungen
+
+;------------------------------------------------------------------------------
+
+        ifndef  ES40_INC                
+                include ../ES4.0/es40_inc.asm
+        endif
 
 ;------------------------------------------------------------------------------
 ; Macro zum Laden von Doppelregistern in Z8 Assembler
