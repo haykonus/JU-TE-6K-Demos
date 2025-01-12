@@ -288,7 +288,7 @@ exx20   MACRO   {NOEXPIF}, {NOEXPAND}, {NOEXPMACRO}
         !ld     20h, 30h        ; Akku holen   
         ENDM
 ```
-Die Verwendung aller 16 Z8-Register in einem Register-Satz würde das Programm beschleunigen. Das könnte man noch umbauen, jedoch müsste der universelle Ansatz der Z80-Macros dann verlassen werden. 
+Die Verwendung aller 16 Z8-Register in einem Registersatz würde das Programm beschleunigen. Das könnte man noch umbauen, jedoch müsste der universelle Ansatz der Z80-Macros dann verlassen werden. 
 
 Die Verwendung und Umsetzung von EX DE,HL auf dem Z8 ist sehr ungünstig und wird in GleEst so verwendet:
 
