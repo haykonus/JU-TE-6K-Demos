@@ -275,7 +275,7 @@ vrp_exit:
 
 ### Kritik
 
-Die 1:1 Umsetzung des GleEst-Algorithmus von Z80 zu Z8 ist keine optimal an den Z8 angepasste Variante von GleEst. Der Z8 kann jedes Register als Akkumulator verwenden. Bei den kompatiblen DDR-Typen des Z8 sind 9 Registersätze mit je 16 8-Bit-Univeralregistern vorhanden (144 Register). Es gibt 124 Universalregister, 4 I/O- sowie 16 Status- und Steuerregister. Die meisten 8-Bit-Register können paarweise auch als 16-Bit-Register genutzt werden können, jedoch im wesentlichen nur für Speicherzugriffe. 16-Bit-Arithmetik z.B. muss aus 8-Bit-Befehlen zusammengesetzt werden. In der vorliegenden Implementierung wurde der sehr häufig verwendete Z80-Befehl EXX durch SRP und Umladen des A(r0)-Registers nachgebildet.
+Die 1:1 Umsetzung des GleEst-Algorithmus von Z80 zu Z8 ist keine optimal an den Z8 angepasste Variante von GleEst. Der Z8 kann jedes Register als Akkumulator verwenden. Bei den kompatiblen DDR-Typen des Z8 sind 9 Registersätze mit je 16 8-Bit-Registern vorhanden (144 Register). Es gibt 124 Universalregister, 4 I/O- sowie 16 Status- und Steuerregister. Die meisten 8-Bit-Register können paarweise auch als 16-Bit-Register genutzt werden können, jedoch im wesentlichen nur für Speicherzugriffe. 16-Bit-Arithmetik z.B. muss aus 8-Bit-Befehlen zusammengesetzt werden. In der vorliegenden Implementierung wurde der sehr häufig verwendete Z80-Befehl EXX durch SRP und Umladen des A(r0)-Registers nachgebildet.
 
 ```
 exx30   MACRO   {NOEXPIF}, {NOEXPAND}, {NOEXPMACRO}
