@@ -77,16 +77,25 @@ Einige Unterschiede gibt es zu beachten, z.B.:
 Der Z8 besitzt kein Parity-Flag:
 
 Z80:
-
+----
 and     a, #0c0h 
 jp      pe, forw  ; Z8 hat kein P-Flag
                                         
 Z8:
-
+---
 and     a, #0c0h  ; Nachbildung Parity Check
 jr      z, forw   
 cp      a, #0c0h
 jr      z, forw
+
+Die Rotate-Befehle sind in der Bedeutung genau umgekehrt:
+
+Instruction                | Z8  | Z80
+--------------------------------------
+Rotate Right               | rr  | rrc
+Rotate Right Through Carry | rrc | rr
+Rotate Left                | rl  | rlc
+Rotate Left Through Carry  | rlc | rl
 ```
 
 ### Grafik
