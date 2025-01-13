@@ -73,9 +73,9 @@ temp    equ     rr14    ;
 
 Einige Unterschiede gibt es zu beachten, z.B.:
 
-```
-Der Z8 besitzt kein Parity-Flag:
+- Der Z8 besitzt kein Parity-Flag:
 
+```
 Z80:
 ----
 and     a, #0c0h 
@@ -87,9 +87,11 @@ and     a, #0c0h  ; Nachbildung Parity Check
 jr      z, forw   
 cp      a, #0c0h
 jr      z, forw
+```
 
-Die Rotate-Befehle sind in der Bedeutung genau umgekehrt:
+- Die Rotate-Befehle sind in der Bedeutung genau umgekehrt:
 
+```
 Instruction                | Z8  | Z80
 --------------------------------------
 Rotate Right               | rr  | rrc
@@ -115,7 +117,7 @@ Die Ermittlung der 16-Bit-VRAM-Adresse erfolgt über eine Lookup-Tabelle, die zu
 ;       r10  = VRAM_TAB_LO <- global static
 ;
 ; out:  HL = rr6 -> VRAM 
-;       A  = r0  -> Bit-Pos (1 aus 8) 
+;       A  = r0  -> Bitpos (1 aus 8) 
 ;--------------------------------------
 
 ld      r12, r3         ; <- X lo
@@ -191,7 +193,7 @@ Die Funktion ```P(x,y) to VRAM``` liefert zusätzlich noch die Bitposition (1aus
  lde     @rr6, r11       ; VRAM schreiben
 ```
 
-Die Bytes, die dann in die 4 Farbebenen zur Darstellung der 6 unterschiedlichen Punkt-Farben geladen werden müssen, werden mit einer 6 x 4 Byte-Tabelle über einen Index ermittelt:
+Die Bytes, die in die 4 Farbebenen zur Darstellung der 6 unterschiedlichen Punkt-Farben geladen werden müssen (nach dem Maskieren mit der Bitposition), werden mit einer 6 x 4 Byte-Tabelle über einen Index ermittelt:
 
 ```
 pixtab:         
