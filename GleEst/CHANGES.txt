@@ -1,0 +1,11 @@
+
+v1.1 - 15.01.2025
+
+- z8 register usage optimized
+- Z80 EXX removed
+- speed improved 
+
+
+v1.0 - 11.01.2025
+
+- initial release
