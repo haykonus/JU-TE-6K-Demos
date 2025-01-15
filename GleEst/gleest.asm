@@ -2,7 +2,7 @@
 ; Title:                GleEst für JuTe 6K
 ;
 ; Erstellt:             05.01.2025
-; Letzte Änderung:      11.01.2025
+; Letzte Änderung:      15.01.2025
 ;------------------------------------------------------------------------------ 
 
                 cpu     z8601
@@ -68,7 +68,7 @@ start:  srp     #30h
         
         ld      hl,buffer1
              
-        exx20   ; buffer2
+        ;exx    ; buffer2
 
         loop_ix:
         
@@ -78,10 +78,10 @@ start:  srp     #30h
                 jp      exit
                 
         noKey:  
-                ld      hl,buffer2
+                ld      hl_,buffer2
         
                 loop:   
-                        ld      bc,3F03h        ; BH = 3F -> max. 64 Punkte / 192-Byte-Block
+                        ld      bc_,3F03h       ; BH = 3F -> max. 64 Punkte / 192-Byte-Block
                                                 ; BL = 03 -> HL auf Anfang von nächstem 
                                                 ;            192-Byte-Block setzen
                         d_loop:
@@ -89,13 +89,13 @@ start:  srp     #30h
                                 ; Pixel löschen
                                 ;
                                 
-                                ld      e,(hl)          ;BWS lo holen
-                                inc     hl
+                                ld      e_,(hl_)         ;BWS lo holen
+                                inc     hl_
 
-                                ld      d,(hl)          ;BWS hi holen
-                                inc     hl
+                                ld      d_,(hl_)         ;BWS hi holen
+                                inc     hl_
                                                                                       
-                                ld      a,(hl)          ;Bitpos
+                                ld      a,(hl_)          ;Bitpos
          
                                 ;-------------------------------------------------------
                                 ; JuTe 6K (320 x 192 | 16 Farben)                           
@@ -108,7 +108,7 @@ start:  srp     #30h
                                 
                                 call    vramResPixel
                                 
-                                exx30           ; buffer1                
+                                ;exx            ; buffer1                
                                 
                                 proc:   ld      a,L
                                 
@@ -149,11 +149,11 @@ start:  srp     #30h
                                 pop     bc
                                 ex      (sp),hl
                               
-                                exx20   ;buffer2
+                                ;exx   ;buffer2
                                 
-                                ld      a,b
+                                ld      a,b_
                                 
-                                exx30   ;buffer1
+                                ;exx   ;buffer1
                     
                                 cp      a,#10h
                                 jp      c,dontplot              
@@ -191,45 +191,46 @@ start:  srp     #30h
                                 ;------------------------------------------------------------
 
                                 jr      nc,x1           ; innerhalb 0-191 ?
-                                call    setPixel                                
+                                call    setPixel                        
                                 jr      x2
                                 
                         x1:     ld      hl,dummy        ; nein -> HL = Dummy-BWS
                                 ld      a,00h
                                 
-                        x2:     push    hl
+                        x2:     
+
+                                ld      d_,h
+                                ld      e_,l
                                 
-                                exx20   ; buffer2
-                                
-                                pop     de              
-                   
-                                ld      (hl),a          ; Bitpos merken
-                                dec     hl
+                                ;exx    ; buffer2                                
+                               
+                                ld      (hl_),a          ; Bitpos merken
+                                dec     hl_
                                   
-                                ld      (hl),d          ; BWS hi merken
-                                dec     hl
+                                ld      (hl_),d_          ; BWS hi merken
+                                dec     hl_
                                 
-                                ld      (hl),e          ; BWS lo merken
-                                inc     hl                      
-                                inc     hl             
-                                ld      a,b
+                                ld      (hl_),e_          ; BWS lo merken
+                                inc     hl_                      
+                                inc     hl_             
+                                ld      a,b_
                                 
-                                exx30   ; buffer1
+                                ;exx    ; buffer1
         
                         dontplot:                       
                                 pop     hl              
                                 
-                                exx20   ; buffer2
+                                ;exx    ; buffer2
                                 
-                                inc     hl   
+                                inc     hl_   
                                 
-                        dec     b
+                        dec     b_
                         jp      nz,d_loop
                         ;djnz    b, d_loop      ; geht nicht, zu weit :-(
                         
-                        add     hl,bc   
+                        add     hl_,bc_   
                         
-                        exx30   ; buffer1                  
+                        ;exx    ; buffer1                  
                         
                         random:
                                 pop     de
@@ -261,10 +262,10 @@ start:  srp     #30h
                                 inc     l
                         jr      nz,random
                         
-                        exx20   ; buffer2                                    
+                        ;exx    ; buffer2                                    
                         
                         ld      a,hi(buffer2_end-1)
-                        cp      a,h
+                        cp      a,h_
                         
                 jp      nc,loop
                 
@@ -305,23 +306,25 @@ fb1:    lde     @rr6, r5                ; Dummy-BWS lo
         decw    rr2
         jr      nz, fb1 
 
-        ld      r8,  #hi(VRAM_TAB_HI)   ; für P(x,y) to VRAM
-        ld      r10, #hi(VRAM_TAB_LO) 
+        ld      78h,  #hi(VRAM_TAB_HI)  ; für P(x,y) to VRAM
+        ld      7Ah,  #hi(VRAM_TAB_LO) 
         
         ret 
         
 ;-----------------------------------------------------------------------------  
 ; Punkt (X,Y) wird mit der Farbe aus "Farbindex" (B') im VRAM gesetzt.  
 ; 
-; in:   A = Y [0-191] Y-Pos
-;       C = X [0-255] X-Pos
-;       B'= Farbindex [10h-3Fh]
+; in:   A = r0 = Y [0-191] Y-Pos
+;       C = r3 = X [0-255] X-Pos
+;       B'= r8 = Farbindex [10h-3Fh]
 ;       
-; out:  HL = VRAM-Adr
-;       A  = Bitpos 
+; out:  HL = rr6 = VRAM-Adr
+;       A  = r0  = Bitpos 
 ;
 ;-----------------------------------------------------------------------------
-; intern:
+; intern: 
+;       rp #70h:
+;
 ;       r0              A       in/out: Y lo / Bitpos
 ;       r1              F       -
 ;       r2              B       in:     X hi = 0        
@@ -341,16 +344,17 @@ fb1:    lde     @rr6, r5                ; Dummy-BWS lo
 ;       r15             Farb-Register lo        
 ;-----------------------------------------------------------------------------  
 
-setPixel: 
-
-        ld      r9, A           ; Y lo <- in
+setPixel:
         
-        exx20   
-        ld      a, B            ; Farbindex (B') holen                               
-        exx30                   
-        ld      r13, a          ; Farbindex [10h-3Fh] nach r13          
+        ; in: Register für rp #70h laden
         
-        ld      r2,  #0
+        ld      79h, A          ; r9  <- A
+        ld      73h, C          ; r3  <- C
+        ld      7Dh, B_         ; r13 <- B'
+        
+        srp     #70h
+       
+        ld      r2, #0
         add     C,  #32         ; r3 = X lo = C <- in
         adc     r2, #0          ; r2 = X hi
                 
@@ -385,6 +389,12 @@ setPixel:
         and     r11, #00000111b 
         or      r11, #11000000b   
         lde     r0, @rr10       ; -> A
+        
+        ;out: Register für rp #30h laden
+        
+        ld      36h, r6         ; r6 -> H
+        ld      37h, r7         ; r7 -> L
+        ld      30h, r0         ; r0 -> A
         
         ;-------------------------------------- 
         
@@ -438,6 +448,8 @@ setPixel:
         or      r11, r9         ; VRAM | Farbe(M)
         lde     @rr6, r11       ; VRAM schreiben
 
+        srp     #30h
+        
         ret
 
 ;-----------------------------------------------------------------------------
@@ -481,15 +493,15 @@ pixtab:
 ;-----------------------------------------------------------------------------  
 ; Pixel (R,G,B,H) im VRAM wird auf 0 gesetzt.
 ;
-; in:   DE = rr4 = VRAM-Adr
-;       A  = r0  = Bitpos
+; in:   DE' = rr10 = VRAM-Adr
+;       A   = r0   = Bitpos
 ;
 ; out:  Pixel in VRAM gelöscht  
 ;-----------------------------------------------------------------------------
 
 vramResPixel:
 
-        cp      d, #hi(dummy)
+        cp      d_, #hi(dummy)
         jr      z, vrp_exit
 
         com     r0              ; r0 = Reset-Maske
@@ -499,30 +511,30 @@ vramResPixel:
         ld      r15, #01111111b ; Farb-Bänke = RGBHxxxx
         lde     @rr14, r15      ; R-Bank einschalten
         
-        lde     r13, @rr4       ; VRAM lesen
-        and     r13, r0         ; VRAM & Reset-Maske
-        lde     @rr4, r13       ; VRAM schreiben
+        lde     r1, @rr10       ; VRAM lesen
+        and     r1, r0          ; VRAM & Reset-Maske
+        lde     @rr10, r1       ; VRAM schreiben
         
         rr      r15
         lde     @rr14, r15      ; G-Bank einschalten
 
-        lde     r13, @rr4       ; VRAM lesen
-        and     r13, r0         ; VRAM & Reset-Maske
-        lde     @rr4, r13       ; VRAM schreiben
+        lde     r1, @rr10       ; VRAM lesen
+        and     r1, r0          ; VRAM & Reset-Maske
+        lde     @rr10, r1       ; VRAM schreiben
 
         rr      r15
         lde     @rr14, r15      ; B-Bank einschalten
 
-        lde     r13, @rr4       ; VRAM lesen
-        and     r13, r0         ; VRAM & Reset-Maske
-        lde     @rr4, r13       ; VRAM schreiben
+        lde     r1, @rr10       ; VRAM lesen
+        and     r1, r0          ; VRAM & Reset-Maske
+        lde     @rr10, r1       ; VRAM schreiben
 
         rr      r15
         lde     @rr14, r15      ; H-Bank einschalten
 
-        lde     r13, @rr4       ; VRAM lesen
-        and     r13, r0         ; VRAM & Reset-Maske
-        lde     @rr4, r13       ; VRAM schreiben
+        lde     r1, @rr10       ; VRAM lesen
+        and     r1, r0          ; VRAM & Reset-Maske
+        lde     @rr10, r1       ; VRAM schreiben
         
 vrp_exit:       
         ret

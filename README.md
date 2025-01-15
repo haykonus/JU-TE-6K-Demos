@@ -43,7 +43,7 @@ Einige Z8-Befehle sind identisch zum Z80 und konnten ohne Anpassung übernommen 
 
 ```
 A       equ     r0
-F       equ     r1      ; enthält keine echten Flags !
+tempF   equ     r1      
 B       equ     r2
 C       equ     r3
 D       equ     r4
@@ -51,25 +51,27 @@ E       equ     r5
 H       equ     r6
 L       equ     r7
 
-IXH     equ     r8      ; r8-r15 für GleEst nicht 
-IXL     equ     r9      ; als Z80 Register   
-IYH     equ     r10     ; verwendet !!!
-IYL     equ     r11     ;
-I       equ     r12     ; 
-R       equ     r13     ; 
-tempH   equ     r14     ;
-tempL   equ     r15     ;
-
 AF      equ     rr0     
 BC      equ     rr2
 DE      equ     rr4
 HL      equ     rr6
 
-IX      equ     rr8     ; rr8-rr14 für GleEst nicht
-IY      equ     rr10    ; als Z80 Register
-IR      equ     rr12    ; verwendet !!!
-temp    equ     rr14    ;
+
+B_      equ     r8      ; 8-Bit-'Register 
+C_      equ     r9      ;       
+D_      equ     r10     ;
+E_      equ     r11     ;
+H_      equ     r12     ;
+L_      equ     r13     ;
+tempH   equ     r14     
+tempL   equ     r15             
+     
+BC_      equ    rr8     ; 16-Bit-'Register
+DE_      equ    rr10    ;
+HL_      equ    rr12    ;
+temp     equ    rr14
 ```
+Durch Nutzung aller 16 8-Bit-Register in einem Registersatz wurde das Umschalten auf den zweiten Z80-Registersatz mit EXX entfernt. Das Umladen von Registern zwischen den Registersätzen mit PUSH/POP konnte durch schnellere Register-Ladebefehle ersetzt werden.
 
 Einige Unterschiede gibt es zu beachten, z.B.:
 
@@ -237,15 +239,15 @@ Auch das Zurücksetzen der Pixel muss für jede Farbebene entsprechend der Bitpo
 ;-----------------------------------------------------------------------------  
 ; Pixel (R,G,B,H) im VRAM wird auf 0 gesetzt.
 ;
-; in:   DE = rr4 = VRAM-Adr
-;       A  = r0  = Bitpos
+; in:   DE' = rr10 = VRAM-Adr
+;       A   = r0   = Bitpos
 ;
 ; out:  Pixel in VRAM gelöscht  
 ;-----------------------------------------------------------------------------
 
 vramResPixel:
 
-        cp      d, #hi(dummy)
+        cp      d_, #hi(dummy)
         jr      z, vrp_exit
 
         com     r0              ; r0 = Reset-Maske
@@ -255,30 +257,30 @@ vramResPixel:
         ld      r15, #01111111b ; Farb-Bänke = RGBHxxxx
         lde     @rr14, r15      ; R-Bank einschalten
         
-        lde     r13, @rr4       ; VRAM lesen
-        and     r13, r0         ; VRAM & Reset-Maske
-        lde     @rr4, r13       ; VRAM schreiben
+        lde     r1, @rr10       ; VRAM lesen
+        and     r1, r0          ; VRAM & Reset-Maske
+        lde     @rr10, r1       ; VRAM schreiben
         
         rr      r15
         lde     @rr14, r15      ; G-Bank einschalten
 
-        lde     r13, @rr4       ; VRAM lesen
-        and     r13, r0         ; VRAM & Reset-Maske
-        lde     @rr4, r13       ; VRAM schreiben
+        lde     r1, @rr10       ; VRAM lesen
+        and     r1, r0          ; VRAM & Reset-Maske
+        lde     @rr10, r1       ; VRAM schreiben
 
         rr      r15
         lde     @rr14, r15      ; B-Bank einschalten
 
-        lde     r13, @rr4       ; VRAM lesen
-        and     r13, r0         ; VRAM & Reset-Maske
-        lde     @rr4, r13       ; VRAM schreiben
+        lde     r1, @rr10       ; VRAM lesen
+        and     r1, r0          ; VRAM & Reset-Maske
+        lde     @rr10, r1       ; VRAM schreiben
 
         rr      r15
         lde     @rr14, r15      ; H-Bank einschalten
 
-        lde     r13, @rr4       ; VRAM lesen
-        and     r13, r0         ; VRAM & Reset-Maske
-        lde     @rr4, r13       ; VRAM schreiben
+        lde     r1, @rr10       ; VRAM lesen
+        and     r1, r0          ; VRAM & Reset-Maske
+        lde     @rr10, r1       ; VRAM schreiben
         
 vrp_exit:       
         ret
@@ -286,22 +288,9 @@ vrp_exit:
 
 ### Kritik
 
-Die 1:1 Umsetzung des GleEst-Algorithmus von Z80 zu Z8 ist keine optimal an den Z8 angepasste Variante von GleEst. Der Z8 kann jedes Register als Akkumulator verwenden. Bei den kompatiblen DDR-Typen des Z8 sind 9 Registersätze mit je 16 8-Bit-Registern vorhanden (144 Register). Es gibt 124 Universalregister, 4 I/O- sowie 16 Status- und Steuerregister. Die meisten 8-Bit-Register können paarweise auch als 16-Bit-Register genutzt werden, jedoch im wesentlichen nur für Speicherzugriffe. 16-Bit-Arithmetik z.B. muss aus 8-Bit-Befehlen zusammengesetzt werden. In der vorliegenden Implementierung wurde der sehr häufig verwendete Z80-Befehl EXX durch SRP und Umladen des A(r0)-Registers nachgebildet.
+Die 1:1 Umsetzung des GleEst-Algorithmus von Z80 zu Z8 ist vermutlich keine optimal an den Z8 angepasste Variante von GleEst. Der Z8 kann jedes Register als Akkumulator verwenden. Bei den kompatiblen DDR-Typen des Z8 sind 9 Registersätze mit je 16 8-Bit-Registern vorhanden (144 Register). Es gibt 124 Universalregister, 4 I/O- sowie 16 Status- und Steuerregister. Die meisten 8-Bit-Register können paarweise auch als 16-Bit-Register genutzt werden, jedoch im wesentlichen nur für Speicherzugriffe. 16-Bit-Arithmetik z.B. muss aus 8-Bit-Befehlen zusammengesetzt werden. 
 
-```
-exx30   MACRO   {NOEXPIF}, {NOEXPAND}, {NOEXPMACRO}
-        srp     #30h
-        !ld     30h, 20h        ; Akku holen       
-        ENDM
-
-exx20   MACRO   {NOEXPIF}, {NOEXPAND}, {NOEXPMACRO}
-        srp     #20h
-        !ld     20h, 30h        ; Akku holen   
-        ENDM
-```
-Die Verwendung aller 16 Z8-Register in einem Registersatz würde das Programm beschleunigen. Das könnte man noch umbauen, jedoch müsste der universelle Ansatz der Z80-Macros dann verlassen werden. 
-
-Die Verwendung und Umsetzung von EX DE,HL auf dem Z8 ist sehr ungünstig und wird in GleEst so verwendet:
+Die Verwendung und Umsetzung von EX DE,HL auf dem Z8 ist z.B. sehr ungünstig und wird in GleEst so verwendet:
 
 ```
 ex      de,hl          
@@ -312,32 +301,30 @@ ex      de,hl
 Die Umsetzung mit Z80-Macros ergab folgenden Z8-Code:
 
 ```
-!ld     tempH, D
-!ld     tempL, E
-!ld     D, H
-!ld     E, L
-!ld     H, tempH
-!ld     L, tempL
+ld     tempH, D
+ld     tempL, E
+ld     D, H
+ld     E, L
+ld     H, tempH
+ld     L, tempL
 
-!add    l, c
-!adc    h, b 
+add    l, c
+adc    h, b 
 
-!ld     tempH, D
-!ld     tempL, E
-!ld     D, H
-!ld     E, L
-!ld     H, tempH
-!ld     L, tempL
+ld     tempH, D
+ld     tempL, E
+ld     D, H
+ld     E, L
+ld     H, tempH
+ld     L, tempL
 ```
 
 Hier geht auf dem Z8 einfach:
 
 ```
-!add    e, c
-!adc    d, b 
+add    e, c
+adc    d, b 
 ```
-Weitere Optimierungen sind sicher noch möglich.
-
 
 ## Quellen
 

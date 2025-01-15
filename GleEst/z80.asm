@@ -2,9 +2,11 @@
 ; Title:                Z80 Macros für Z8
 ;
 ; Erstellt:             20.11.2024
-; Letzte Änderung:      11.01.2025
+; Letzte Änderung:      15.01.2025
 ;------------------------------------------------------------------------------
 
+                ;cpu     z8601
+                
 Z80_INC                 ; Flag für include-Anweisungen
 
 ;------------------------------------------------------------------------------
@@ -16,7 +18,7 @@ Z80_INC                 ; Flag für include-Anweisungen
 ;------------------------------------------------------------------------------
         
 A       equ     r0
-F       equ     r1      ; enthält keine echten Flags !
+tempF   equ     r1      
 B       equ     r2
 C       equ     r3
 D       equ     r4
@@ -24,33 +26,34 @@ E       equ     r5
 H       equ     r6
 L       equ     r7
 
-IXH     equ     r8      ; r8-r15 für GleEst nicht 
-IXL     equ     r9      ; als Z80 Register   
-IYH     equ     r10     ; verwendet !!!
-IYL     equ     r11     ;
-I       equ     r12     ; 
-R       equ     r13     ; 
-tempH   equ     r14     ;
-tempL   equ     r15     ;
-
 AF      equ     rr0     
 BC      equ     rr2
 DE      equ     rr4
 HL      equ     rr6
 
-IX      equ     rr8     ; rr8-rr14 für GleEst nicht
-IY      equ     rr10    ; als Z80 Register
-IR      equ     rr12    ; verwendet !!!
-temp    equ     rr14    ;
 
+B_      equ     r8      ; 8-Bit-'Register 
+C_      equ     r9      ;       
+D_      equ     r10     ;
+E_      equ     r11     ;
+H_      equ     r12     ;
+L_      equ     r13     ;
+tempH   equ     r14     
+tempL   equ     r15             
+     
+BC_      equ    rr8     ; 16-Bit-'Register
+DE_      equ    rr10    ;
+HL_      equ    rr12    ;
+temp     equ    rr14
+        
 ; rudimentäre Parser-Funktionen
 
-isZ80r          function op, (op=="A")||(op=="B") ||(op=="C") ||(op=="D") ||(op=="E")|| \
-                             (op=="H")|| (op=="L")||(op=="IXL")||(op=="IXH")|| \
-                             (op=="IYL")||(op=="IYH")||(op=="I")||(op=="R")
+isZ80r          function op, (op=="A") ||(op=="F") || \
+                             (op=="B") ||(op=="C") ||(op=="D") ||(op=="E")||  (op=="H")|| (op=="L")|| \
+                             (op=="C_")||(op=="B_")||(op=="D_")||(op=="E_")|| (op=="H_")||(op=="L_")
                              
-isZ80rr         function op, (op=="AF")||(op=="BC")||(op=="DE")||(op=="HL")|| \
-                             (op=="IX")||(op=="IY")||(op=="IR")
+isZ80rr         function op, (op=="BC") ||(op=="DE") ||(op=="HL")|| \
+                             (op=="BC_")||(op=="DE_")||(op=="HL_")
 
 getFromBrackets function op, substr(substr(op,0,strstr(op,")")),1,0)
 
@@ -58,19 +61,7 @@ isInBrackets    function op, (substr(op,0,1) == "(") && (substr(op, strstr(op,")
 
 getOffset       function op, substr(getFromBrackets(op), strstr(getFromBrackets(op),"+")+1, 0)
 
-;------------------------------------------------------------------------------
-
-ldir    MACRO   {NOEXPIF}, {NOEXPAND}, {NOEXPMACRO}
-
-ldir1:  lde     tempL, @hl
-        lde     @de, tempL
-        incw    hl
-        incw    de
-        decw    bc
-        jr      nz, ldir1
-        
-        ENDM
-        
+       
 ;------------------------------------------------------------------------------
 
 inc     MACRO   OP1, {NOEXPIF}, {NOEXPAND}, {NOEXPMACRO}
@@ -132,6 +123,21 @@ add     MACRO   OP1, OP2, {NOEXPIF}, {NOEXPAND}, {NOEXPMACRO}
                         !add    l, SPL
                         !adc    h, SPH  
                 endif   
+        elseif "OP1" == "HL_"
+                if "OP2" == "BC_"
+                        !add    l_, c_
+                        !adc    h_, b_    
+                elseif "OP2" == "DE_"
+                        !add    l_, e_
+                        !adc    h_, d_    
+                elseif "OP2" == "HL_"
+                        !add    l_, l_
+                        !adc    h_, h_
+                elseif "OP2" == "SP"
+                        !add    l_, SPL
+                        !adc    h_, SPH  
+                endif 
+                
         ; add DE, rr            
         elseif "OP1" == "DE"
                 if "OP2" == "BC"
@@ -147,6 +153,20 @@ add     MACRO   OP1, OP2, {NOEXPIF}, {NOEXPAND}, {NOEXPMACRO}
                         !add    e, SPL
                         !adc    d, SPH  
                 endif   
+        elseif "OP1" == "DE_"
+                if "OP2" == "BC_"
+                        !add    e_, c_
+                        !adc    d_, b_    
+                elseif "OP2" == "DE_"
+                        !add    e_, e_
+                        !adc    d_, d_    
+                elseif "OP2" == "HL_"
+                        !add    e_, l_
+                        !adc    d_, h_
+                elseif "OP2" == "SP"
+                        !add    e_, SPL
+                        !adc    d_, SPH  
+                endif          
         else    
                 !add    OP1, OP2
         endif
@@ -156,19 +176,8 @@ add     MACRO   OP1, OP2, {NOEXPIF}, {NOEXPAND}, {NOEXPMACRO}
 ;------------------------------------------------------------------------------
 
 ex      MACRO   OP1, OP2, {NOEXPIF}, {NOEXPAND}, {NOEXPMACRO}
-        
-        if "OP1" == "DE" 
-                ; EX  DE,HL
-                if "OP2" == "HL"  
-                        !ld     tempH, D
-                        !ld     tempL, E
-                        !ld     D, H
-                        !ld     E, L
-                        !ld     H, tempH
-                        !ld     L, tempL
-                endif
-                                
-        elseif "OP1" == "(SP)"
+                                       
+        if "OP1" == "(SP)"
                 ; EX  (SP),HL   
                 if "OP2" == "HL"                        
                         !pop    tempL
@@ -177,29 +186,19 @@ ex      MACRO   OP1, OP2, {NOEXPIF}, {NOEXPAND}, {NOEXPMACRO}
                         !push   l
                         !ld     h, tempH
                         !ld     l, tempL
-                endif
+
+                elseif "OP2" == "HL_"                        
+                        !pop    tempL
+                        !pop    tempH
+                        !push   h_
+                        !push   l_
+                        !ld     h_, tempH
+                        !ld     l_, tempL
+                endif       
         endif
         
         ENDM    
 
-;------------------------------------------------------------------------------
-
-exx30   MACRO   {NOEXPIF}, {NOEXPAND}, {NOEXPMACRO}
-
-        srp     #30h
-        !ld     30h, 20h        ; Akku holen
-        
-        ENDM
-
-;------------------------------------------------------------------------------
-
-exx20   MACRO   {NOEXPIF}, {NOEXPAND}, {NOEXPMACRO}
-
-        srp     #20h
-        !ld     20h, 30h        ; Akku holen
-        
-        ENDM
-        
 ;------------------------------------------------------------------------------
 
 push    MACRO   OP1, {NOEXPIF};, {NOEXPAND}, {NOEXPMACRO}
@@ -217,7 +216,16 @@ push    MACRO   OP1, {NOEXPIF};, {NOEXPAND}, {NOEXPMACRO}
                 elseif "OP1" == "HL"
                         !push   h
                         !push   l
-                endif                   
+                elseif "OP1" == "BC_"
+                        !push   b_
+                        !push   c_
+                elseif "OP1" == "DE_"
+                        !push   d_
+                        !push   e_                       
+                elseif "OP1" == "HL_"
+                        !push   h_
+                        !push   l_
+                endif                  
         else
                 !push   OP1
         endif
@@ -241,7 +249,16 @@ pop     MACRO   OP1, {NOEXPIF}, {NOEXPAND}, {NOEXPMACRO}
                 elseif "OP1" == "HL"
                         !pop    l
                         !pop    h
-                endif
+                elseif "OP1" == "BC_"
+                        !pop    c_
+                        !pop    b_                       
+                elseif "OP1" == "DE_"
+                        !pop    e_
+                        !pop    d_       
+                elseif "OP1" == "HL_"
+                        !pop    l_
+                        !pop    h_
+                endif           
         else
                 !pop    OP1
         endif
@@ -252,15 +269,15 @@ pop     MACRO   OP1, {NOEXPIF}, {NOEXPAND}, {NOEXPMACRO}
 
 ld      MACRO   OP1, OP2, {NOEXPIF}, {NOEXPAND}, {NOEXPMACRO}
 
-        ;A B C D E H L I R IXH IXL IYH IYL
+        ;A  B C D E H L  B_ C_ D_ E_ H_ L_ 
         if isZ80r("OP1")
 
-                ;A B C D E H L I R IXH IXL IYH IYL
+                ;A  B C D E H L  B_ C_ D_ E_ H_ L_
                 if isZ80r("OP2")
                         ;message "Z80 -> LD OP1,OP2 | Register <- Register"
                         !ld     OP1, OP2
 
-                ;(BC) (DE) (HL) (IX+N) (IY+N) (NN)
+                ;(BC) (DE) (HL) (BC_) (DE_) (HL_) (NN)
                 elseif isInBrackets("OP2")
                         ;(BC)
                         if getFromBrackets("OP2") == "BC"
@@ -274,35 +291,18 @@ ld      MACRO   OP1, OP2, {NOEXPIF}, {NOEXPAND}, {NOEXPMACRO}
                         elseif getFromBrackets("OP2") == "HL"
                                 ;message "Z80 -> LD OP1,OP2 | OP2"
                                 lde     OP1, @hl
-                        ;(IX[+])
-                        elseif strstr (getFromBrackets("OP2"), "IX") >= 0
-                                ;(IX+N)
-                                if strstr(getFromBrackets("OP2"),"+") >= 0
-                                        ;message "Z80 -> LD OP1,OP2 | IX+\{getOffset("OP2")}"
-
-                                        add     ixl, #lo(val(getOffset("OP2")))
-                                        adc     ixh, #hi(val(getOffset("OP2")))
-                                        lde     OP1, @ix
-                                ;(IX)
-                                else
-                                        ;message "Z80 -> LD OP1,OP2 | OP2"
-                                        lde     OP1, @ix
-
-                                endif
-                        ;(IY[+])
-                        elseif strstr (getFromBrackets("OP2"), "IY") >= 0
-                                ;(IY+N)
-                                if strstr(getFromBrackets("OP2"),"+") >= 0
-                                        ;message "Z80 -> LD OP1,OP2 | IY+\{getOffset("OP2")}"
-                                        add     iyl, #lo(val(getOffset("OP2")))
-                                        adc     iyh, #hi(val(getOffset("OP2")))
-                                        lde     OP1, @iy
-                                ;(IY)
-                                else
-                                        ;message "Z80 -> LD OP1,OP2 | OP2"
-                                        lde     OP1, @iy
-
-                                endif
+                        ;(BC_)
+                        elseif getFromBrackets("OP2") == "BC_"
+                                ;message "Z80 -> LD OP1,OP2 | OP2"
+                                lde     OP1, @bc_
+                        ;(DE_)
+                        elseif getFromBrackets("OP2") == "DE_"
+                                ;message "Z80 -> LD OP1,OP2 | OP2"
+                                lde     OP1, @de_
+                        ;(HL_)
+                        elseif getFromBrackets("OP2") == "HL_"
+                                ;message "Z80 -> LD OP1,OP2 | OP2"
+                                lde     OP1, @hl_
                         ;(NN)
                         else
                                 ;message "Z80 -> LD OP1,OP2 | \{getFromBrackets("OP2")}"
@@ -316,7 +316,7 @@ ld      MACRO   OP1, OP2, {NOEXPIF}, {NOEXPAND}, {NOEXPMACRO}
                         !ld     OP1, #OP2
                 endif
 
-        ;BC DE HL SP IX IY
+        ;BC DE HL BC_ DE_ HL_
         elseif isZ80rr("OP1")
                 ;(NN)
                 if isInBrackets("OP2")
@@ -337,14 +337,18 @@ ld      MACRO   OP1, OP2, {NOEXPIF}, {NOEXPAND}, {NOEXPMACRO}
                                 lde     h, @temp
                                 incw    temp
                                 lde     l, @temp
-                        elseif "OP1" == "IX"
-                                lde     ixh, @temp
+                        elseif "OP1" == "BC_"
+                                lde     B_, @temp
                                 incw    temp
-                                lde     ixl, @temp
-                        elseif "OP1" == "IY"
-                                lde     iyh, @temp
+                                lde     C_, @temp
+                        elseif "OP1" == "DE_"
+                                lde     D_, @temp
                                 incw    temp
-                                lde     iyl, @temp
+                                lde     E_, @temp
+                        elseif "OP1" == "HL_"
+                                lde     H_, @temp
+                                incw    temp
+                                lde     L_, @temp
                         endif
                 ;NN
                 elseif EXPRTYPE(OP2) == 0       ; integer ?
@@ -359,21 +363,23 @@ ld      MACRO   OP1, OP2, {NOEXPIF}, {NOEXPAND}, {NOEXPMACRO}
                         elseif "OP1" == "HL"
                                 !ld     h, #hi(OP2)
                                 !ld     l, #lo(OP2)
-                        elseif "OP1" == "IX"
-                                !ld     ixh, #hi(OP2)
-                                !ld     ixl, #lo(OP2)
-                        elseif "OP1" == "IY"
-                                !ld     iyh, #hi(OP2)
-                                !ld     iyl, #lo(OP2)
+                        elseif "OP1" == "BC_"
+                                !ld     b_, #hi(OP2)
+                                !ld     c_, #lo(OP2)
+                        elseif "OP1" == "DE_"
+                                !ld     d_, #hi(OP2)
+                                !ld     e_, #lo(OP2)
+                        elseif "OP1" == "HL_"
+                                !ld     h_, #hi(OP2)
+                                !ld     l_, #lo(OP2)
                         endif
                 endif
 
 
-
-        ;(BC) (DE) (HL) (IX+N) (IY+N) (NN)
+        ;(BC) (DE) (HL) (BC_) (DE_) (HL_) (NN)
         elseif isInBrackets("OP1")
 
-                ;A B C D E H L I R IXH IXL IYH IYL
+                ;A  B C D E H L  B_ C_ D_ E_ H_ L_
                 if isZ80r("OP2")
 
                         ;(BC)
@@ -388,36 +394,18 @@ ld      MACRO   OP1, OP2, {NOEXPIF}, {NOEXPAND}, {NOEXPMACRO}
                         elseif getFromBrackets("OP1") == "HL"
                                 ;message "Z80 -> LD OP1,OP2 | OP1"
                                 lde     @hl, OP2
-                        ;(IX[+])
-                        elseif strstr (getFromBrackets("OP1"), "IX") >= 0
-                                ;(IX+N)
-                                if strstr(getFromBrackets("OP1"),"+") >= 0
-                                        ;message "Z80 -> LD OP1,OP2 | IX+\{getOffset("OP1")}"
-
-                                        add     ixl, #lo(val(getOffset("OP1")))
-                                        adc     ixh, #hi(val(getOffset("OP1")))
-                                        lde     @ix, OP2
-                                ;(IX)
-                                else
-                                        ;message "Z80 -> LD OP1,OP2 | OP1"
-                                        lde     @ix, OP2
-
-                                endif
-                        ;(IY[+])
-                        elseif strstr (getFromBrackets("OP1"), "IY") >= 0
-                                ;(IY+N)
-                                if strstr(getFromBrackets("OP1"),"+") >= 0
-                                        ;message "Z80 -> LD OP1,OP2 | IY+\{getOffset("OP1")}"
-                                        add     iyl, #lo(val(getOffset("OP1")))
-                                        adc     iyh, #hi(val(getOffset("OP1")))
-                                        lde     @iy, OP2
-                                ;(IY)
-                                else
-                                        ;message "Z80 -> LD OP1,OP2 | OP1"
-                                        lde     @iy, OP2
-
-                                endif
-
+                        ;(BC_)  
+                        elseif getFromBrackets("OP1") == "BC_"
+                                ;message "Z80 -> LD OP1,OP2 | OP1"
+                                lde     @bc_, OP2
+                        ;(DE_)
+                        elseif getFromBrackets("OP1") == "DE_"
+                                ;message "Z80 -> LD OP1,OP2 | OP1"
+                                lde     @de_, OP2
+                        ;(HL_)
+                        elseif getFromBrackets("OP1") == "HL_"
+                                ;message "Z80 -> LD OP1,OP2 | OP1"
+                                lde     @hl_, OP2                                                       
                         ;(NN)
                         elseif EXPRTYPE(val(getFromBrackets("OP1"))) == 0       ; integer ?
 
@@ -437,42 +425,11 @@ ld      MACRO   OP1, OP2, {NOEXPIF}, {NOEXPAND}, {NOEXPMACRO}
                                 message "Z80 -> LD OP1,OP2 | OP1"
                                 !ld     tempL, #OP2
                                 lde     @hl, tempL
-                                
-                        ;(IX[+])
-                        elseif strstr (getFromBrackets("OP1"), "IX") >= 0
-                                ;(IX+N)
-                                if strstr(getFromBrackets("OP1"),"+") >= 0
-                                        ;message "Z80 -> LD OP1,OP2 | IX+\{getOffset("OP1")}"
-
-                                        add     ixl, #lo(val(getOffset("OP1")))
-                                        adc     ixh, #hi(val(getOffset("OP1")))
-                                        !ld     tempL, #OP2
-                                        lde     @ix, tempL
-                                ;(IX)
-                                else
-                                        ;message "Z80 -> LD OP1,OP2 | OP1"
-                                        !ld     tempL, #OP2                                     
-                                        lde     @ix, tempL
-
-                                endif
-                                
-                        ;(IY[+])
-                        elseif strstr (getFromBrackets("OP1"), "IY") >= 0
-                                ;(IY+N)
-                                if strstr(getFromBrackets("OP1"),"+") >= 0
-                                        ;message "Z80 -> LD OP1,OP2 | IY+\{getOffset("OP1")}"
-                                        add     iyl, #lo(val(getOffset("OP1")))
-                                        adc     iyh, #hi(val(getOffset("OP1")))
-                                        !ld     tempL, #OP2
-                                        lde     @iy, tempL
-                                ;(IY)
-                                else
-                                        ;message "Z80 -> LD OP1,OP2 | OP1"
-                                        !ld     tempL, #OP2
-                                        lde     @iy, tempL
-
-                                endif
-                        endif   
+                        elseif getFromBrackets("OP1") == "HL_"
+                                message "Z80 -> LD OP1,OP2 | OP1"
+                                !ld     tempL, #OP2
+                                lde     @hl_, tempL
+                        endif 
                 endif   
                                         
         else
@@ -482,3 +439,6 @@ ld      MACRO   OP1, OP2, {NOEXPIF}, {NOEXPAND}, {NOEXPMACRO}
 
         ENDM
 
+        ;org    8000H
+        
+        ;ld     hl, 1
