@@ -1,4 +1,4 @@
-[English version](https://github-com.translate.goog/haykonus/JU-TE-6K-Demos?_x_tr_sl=de&_x_tr_tl=en&_x_tr_hl=de&_x_tr_pto=wapp)
+[Deutsch](https://github.com/haykonus/JU-TE-6K-Demos) | [English](https://github-com.translate.goog/haykonus/JU-TE-6K-Demos?_x_tr_sl=de&_x_tr_tl=en&_x_tr_hl=de&_x_tr_pto=wapp)
 # INHALT
 
 [GleEst](https://github.com/haykonus/JU-TE-6K-Demos/tree/main?tab=readme-ov-file#gleest)
